@@ -51,8 +51,8 @@ flutter run
 ## Technology Stack
 
 - **Frontend**: Flutter
-- **Backend**: Subabase (or specify if using another backend)
-- **Database**: Subabase/Postgress (based on your choice)
+- **Backend**: Subabase
+- **Database**: Subabase/Postgress
 
 ---
 
@@ -71,8 +71,6 @@ Auto Rent follows a modular and scalable architecture pattern, ensuring:
 ![Home Screen](#)  
 ![Car Details](#)  
 ![Booking Confirmation](#)
-
-(Replace `#` with actual image links.)
 
 ---
 
