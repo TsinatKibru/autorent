@@ -1,16 +1,88 @@
-# Auto_rent
+# Auto Rent 🚗
 
-A new Flutter project.
+Effortless car rentals, right at your fingertips.
+
+## Overview
+
+Auto Rent is a modern and user-friendly car rental app that provides a seamless experience for customers to browse, book, and manage car rentals. Whether you’re planning a weekend getaway, a business trip, or simply need a car for daily errands, Auto Rent offers a wide range of vehicles to suit your needs.
+
+## Features
+
+### 🔑 Key Features:
+
+- **Browse Cars**: Explore a curated selection of vehicles, from economy to luxury.
+- **Smart Filters**: Narrow your search with options for price, type, fuel, and more.
+- **Quick Booking**: Rent a car in just a few taps.
+- **Location-Based Services**: Find cars available near your current location.
+- **24/7 Support**: Always available to assist with your car rental needs.
+
+### 🌟 Why Choose Auto Rent?
+
+- **Flexibility**: Rent by the hour, day, or week.
+- **Transparency**: No hidden fees, clear terms, and conditions.
+- **Convenience**: Fully digital experience from booking to return.
+
+---
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Installation
 
-A few resources to get you started if this is your first Flutter project:
+Clone the repository to your local machine:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+git clone https://github.com/TsinatKibru/autorent.git
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Install dependencies:
+
+```bash
+flutter pub get
+```
+
+Run the app:
+
+```bash
+flutter run
+```
+
+---
+
+## Technology Stack
+
+- **Frontend**: Flutter
+- **Backend**: Subabase (or specify if using another backend)
+- **Database**: Subabase/Postgress (based on your choice)
+
+---
+
+## App Architecture
+
+Auto Rent follows a modular and scalable architecture pattern, ensuring:
+
+- **Maintainability**
+- **Reusability**
+- **Performance Optimization**
+
+---
+
+## Screenshots
+
+![Home Screen](#)  
+![Car Details](#)  
+![Booking Confirmation](#)
+
+(Replace `#` with actual image links.)
+
+---
+
+## Contributing
+
+Contributions are welcome! Please follow these steps to contribute:
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make changes and commit.
+4. Submit a pull request.
+
+---
