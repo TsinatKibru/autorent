@@ -23,6 +23,7 @@ class _SignupPageState extends State<SignupPage> {
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  bool isSignUpClicked = false;
 
   bool _isObscured = true;
 
@@ -60,6 +61,12 @@ class _SignupPageState extends State<SignupPage> {
             listener: (context, state) {
               if (state is AuthFailure) {
                 showSnackbar(context, state.message);
+              }
+
+              if (state is AuthSuccess) {
+                if (isSignUpClicked) {
+                  Navigator.pop(context);
+                }
               }
             },
             builder: (context, state) {
@@ -117,6 +124,11 @@ class _SignupPageState extends State<SignupPage> {
                                     name: nameController.text.trim(),
                                     password: passwordController.text.trim()),
                               );
+                          Future.delayed(const Duration(milliseconds: 10), () {
+                            setState(() {
+                              isSignUpClicked = true;
+                            });
+                          });
                         }
                       },
                       buttonText: 'Sign Up',

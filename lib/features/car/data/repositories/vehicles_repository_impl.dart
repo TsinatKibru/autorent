@@ -14,9 +14,11 @@ class VehiclesRepositoryImpl implements VehiclesRepository {
   VehiclesRepositoryImpl(this.remoteDataSource);
 
   @override
-  Future<Either<Failure, List<Vehicle>>> fetchVehicles() async {
+  Future<Either<Failure, List<Vehicle>>> fetchVehicles(
+      {required int page, required int limit}) async {
     try {
-      final vehicles = await remoteDataSource.fetchVehicles();
+      final vehicles =
+          await remoteDataSource.fetchVehicles(page: page, limit: limit);
       return right(vehicles);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -57,6 +59,7 @@ class VehiclesRepositoryImpl implements VehiclesRepository {
         seatingCapacity: vehicle.seatingCapacity,
         rating: vehicle.rating,
         available: vehicle.available,
+        activeStatus: vehicle.activeStatus,
         gallery: vehicle.gallery,
         createdAt: vehicle.createdAt,
         updatedAt: vehicle.updatedAt,
@@ -71,7 +74,8 @@ class VehiclesRepositoryImpl implements VehiclesRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateVehicle(int id, Vehicle vehicle) async {
+  Future<Either<Failure, Vehicle>> updateVehicle(
+      int id, Vehicle vehicle) async {
     try {
       // Convert Vehicle to VehicleModel
       final vehicleModel = VehicleModel(
@@ -94,14 +98,20 @@ class VehiclesRepositoryImpl implements VehiclesRepository {
         seatingCapacity: vehicle.seatingCapacity,
         rating: vehicle.rating,
         available: vehicle.available,
+        activeStatus: vehicle.activeStatus,
         gallery: vehicle.gallery,
         createdAt: vehicle.createdAt,
         updatedAt: vehicle.updatedAt,
       );
 
-      await remoteDataSource.updateVehicle(
-          id, vehicleModel); // Pass the converted VehicleModel
-      return right(unit);
+      // Call the data source and get the updated VehicleModel
+      final updatedVehicleModel =
+          await remoteDataSource.updateVehicle(id, vehicleModel);
+
+      // Convert VehicleModel back to Vehicle
+      final updatedVehicle = updatedVehicleModel.toEntity();
+
+      return right(updatedVehicle);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }
@@ -112,6 +122,61 @@ class VehiclesRepositoryImpl implements VehiclesRepository {
     try {
       await remoteDataSource.deleteVehicle(id);
       return right(unit);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Vehicle>>> fetchTopRatedVehicles(
+      {required int limit}) async {
+    try {
+      // Pass the 'limit' parameter to the remoteDataSource method
+      final vehicles =
+          await remoteDataSource.fetchTopRatedVehicles(limit: limit);
+      return right(vehicles);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Vehicle>>> searchVehicles({
+    required String query,
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final vehicles = await remoteDataSource.searchVehicles(
+        keyword: query,
+        page: page,
+        limit: limit,
+      );
+
+      return right(vehicles);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Vehicle>>> getVehiclesByHostId(String id) async {
+    // TODO: implement getVehiclesByHostId
+    try {
+      // Pass the 'limit' parameter to the remoteDataSource method
+      final vehicles = await remoteDataSource.getVehiclesByHostId(id);
+      return right(vehicles);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Vehicle>>> fetchFavoriteVehicles(
+      List<int> ids) async {
+    try {
+      final vehicles = await remoteDataSource.fetchFavoriteVehicles(ids);
+      return right(vehicles);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }

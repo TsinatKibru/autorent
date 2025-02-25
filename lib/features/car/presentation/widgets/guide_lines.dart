@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GuideLines extends StatefulWidget {
-  const GuideLines({Key? key}) : super(key: key);
+  final String guidelinesnote;
+  const GuideLines({Key? key, required this.guidelinesnote}) : super(key: key);
 
   @override
   _GuideLinesState createState() => _GuideLinesState();
@@ -10,9 +11,11 @@ class GuideLines extends StatefulWidget {
 class _GuideLinesState extends State<GuideLines> {
   @override
   Widget build(BuildContext context) {
+    final guidelinesnote = widget.guidelinesnote;
     final List<String> guidelines = [
       "No pets allowed, No smoking, Strictly enforced",
       "Return clean, or be prepared to pay for clean up",
+      guidelinesnote
     ];
 
     return Column(

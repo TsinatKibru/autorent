@@ -61,6 +61,9 @@ class _LogInPageState extends State<LogInPage> {
               if (state is AuthFailure) {
                 showSnackbar(context, state.message);
               }
+              // if (state is AuthSuccess) {
+              //   showSnackbar(context, "Wlecome!");
+              // }
             },
             builder: (context, state) {
               if (state is AuthLoading) {
@@ -71,7 +74,7 @@ class _LogInPageState extends State<LogInPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Sign In',
                       style: TextStyle(
                           fontSize: 39,
@@ -83,7 +86,7 @@ class _LogInPageState extends State<LogInPage> {
                       hintText: "Email",
                       controller: emailController,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     AuthField(
@@ -112,7 +115,7 @@ class _LogInPageState extends State<LogInPage> {
                       },
                       buttonText: 'Sign In',
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(context, SignupPage.route());

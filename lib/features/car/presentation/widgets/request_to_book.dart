@@ -1,14 +1,64 @@
+import 'dart:ffi';
+
+import 'package:car_rent/core/common/bloc/rental/rental_bloc.dart';
+import 'package:car_rent/core/common/entities/profile.dart';
+import 'package:car_rent/core/common/entities/rental.dart';
+import 'package:car_rent/core/common/widgets/custom_image.dart';
+import 'package:car_rent/core/common/widgets/price_display.dart';
+import 'package:car_rent/core/utils/date_time_utils.dart';
+import 'package:car_rent/core/utils/dialog_helper.dart';
+import 'package:car_rent/core/utils/show_snackbar.dart';
+import 'package:car_rent/features/car/domain/entities/vehicle.dart';
 import 'package:car_rent/features/car/presentation/widgets/car_rent_gradient_button.dart';
 import 'package:car_rent/features/car/presentation/widgets/get_approved_widget.dart';
+import 'package:car_rent/features/navigation/presentation/widgets/bottom_navigation_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rent/core/theme/app_pallete.dart';
 import 'package:car_rent/features/car/presentation/widgets/payment_details.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RequestToBook extends StatelessWidget {
-  const RequestToBook({Key? key}) : super(key: key);
+  final Vehicle vehicle;
+  final DateTime initialdatetime;
+  final DateTime returndatetime;
+  final String pickuplocation;
+  final double distancefee;
+  final Profile renterprofile;
+  const RequestToBook(
+      {Key? key,
+      required this.vehicle,
+      required this.initialdatetime,
+      required this.returndatetime,
+      required this.pickuplocation,
+      required this.distancefee,
+      required this.renterprofile})
+      : super(key: key);
+
+  void _submitrental(BuildContext context, double tripFee) {
+    try {
+      Rental rental = Rental(
+        id: 0,
+        vehicleId: vehicle.id,
+        profileId: renterprofile.id,
+        hostId: vehicle.host,
+        startTime: initialdatetime,
+        endTime: returndatetime,
+        pickupLocation: pickuplocation,
+        totalCost: tripFee,
+        status: "pending",
+      );
+      context.read<RentalBloc>().add(CreateRentalEvent(rental));
+    } catch (e) {
+      showSnackbar(context, 'Error creating rental: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final duration = returndatetime.difference(initialdatetime);
+
+    final totalHours = (duration.inMinutes / 60).ceil();
+    final tripFee = totalHours * vehicle.pricePerHour + distancefee;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -23,73 +73,89 @@ class RequestToBook extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildCarImage(),
-                      const SizedBox(width: 16.0),
-                      _buildCarDetails(),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "Trip date & Time",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 227, 249, 228),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildDateTimeColumn("10 Aug, Thu", "10:00 AM"),
-                      const Icon(Icons.arrow_forward, color: Colors.green),
-                      _buildDateTimeColumn("17 Aug, Thu", "5:00 AM"),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  "Pickup & Return",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Icon(Icons.location_on,
-                        color: AppPalette.primaryColor, size: 24),
-                    const SizedBox(width: 8),
-                    const Text(
-                      "Addis Ababa, CA 911212",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black38,
-                      ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCarImage(),
+                        const SizedBox(width: 16.0),
+                        _buildCarDetails(),
+                      ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                PaymentDetails(),
-              ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Trip date & Time",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 227, 249, 228),
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildDateTimeColumn(
+                            "${initialdatetime.year} , ${DateTimeUtils.getMonthName(initialdatetime.month)} ${initialdatetime.day}",
+                            DateTimeUtils.getFormattedTime(initialdatetime)),
+                        const Icon(Icons.arrow_forward, color: Colors.green),
+                        _buildDateTimeColumn(
+                            "${initialdatetime.year} , ${DateTimeUtils.getMonthName(initialdatetime.month)} ${returndatetime.day}",
+                            DateTimeUtils.getFormattedTime(returndatetime)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Pickup & Return",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on,
+                          color: AppPalette.primaryColor, size: 24),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          pickuplocation,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black38,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  PaymentDetails(
+                    initialdatetime: initialdatetime,
+                    returndatetime: returndatetime,
+                    distancefee: distancefee,
+                    priceperhour: vehicle.pricePerHour,
+                  ),
+                  const SizedBox(
+                    height: 100,
+                  )
+                ],
+              ),
             ),
           ),
           DraggableScrollableSheet(
@@ -134,25 +200,76 @@ class RequestToBook extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              "Total: \$960",
-                              style: TextStyle(
+                            Text(
+                              "Total: \$${tripFee.toStringAsFixed(2)}",
+                              style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
                             ),
                             CarRentGradientButton(
-                                buttonText: "Proceed to Pay",
-                                width: 170,
-                                onPressed: () {
-                                  // Proceed to payment logic
+                              buttonText: "Proceed to Pay",
+                              width: 170,
+                              onPressed: () {
+                                print(
+                                    "renterprofile.phoneNumber ${renterprofile.phoneNumber}");
+                                if (renterprofile.avatar != null &&
+                                    renterprofile.phoneNumber != null &&
+                                    renterprofile.phoneNumber != "" &&
+                                    renterprofile.driverLicenseImageUrl !=
+                                        null &&
+                                    renterprofile.driverLicenseImageUrl != "") {
+                                  _submitrental(context, tripFee);
+                                  // Navigate to BottomNavigationBarWidget if the profile is complete
+                                  DialogHelper.showCustomSnackbar(
+                                    context: context,
+                                    message:
+                                        'Your rental is confirmed! Track your Rental in the trips list.',
+                                    icon: Icons.check_circle,
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 6, 83, 18),
+                                    duration: const Duration(seconds: 4),
+                                    bottomMargin: 150,
+                                  );
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) =>
+                                  //         BottomNavigationBarWidget(
+                                  //             initialIndex: 1),
+                                  //   ),
+                                  // );
+
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            BottomNavigationBarWidget(
+                                                initialIndex: 1)),
+                                    (Route<dynamic> route) =>
+                                        false, // Removes all previous routes
+                                  );
+                                } else {
+                                  Rental rental = Rental(
+                                    id: 0,
+                                    vehicleId: vehicle.id,
+                                    profileId: renterprofile.id,
+                                    hostId: vehicle.host,
+                                    startTime: initialdatetime,
+                                    endTime: returndatetime,
+                                    pickupLocation: pickuplocation,
+                                    totalCost: tripFee,
+                                    status: "pending",
+                                  );
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => GetApprovedWidget(),
+                                      builder: (context) =>
+                                          GetApprovedWidget(rental: rental),
                                     ),
                                   );
-                                }),
+                                }
+                              },
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -164,24 +281,13 @@ class RequestToBook extends StatelessWidget {
                               color: Colors.white),
                         ),
                         const SizedBox(height: 8),
-                        Row(
+                        const Row(
                           children: [
                             Icon(Icons.credit_card,
                                 color: Colors.white, size: 20),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "Credit Card",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.paypal, color: Colors.white, size: 20),
-                            const SizedBox(width: 8),
-                            const Text(
-                              "PayPal",
+                            SizedBox(width: 8),
+                            Text(
+                              "Cash",
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -204,16 +310,11 @@ class RequestToBook extends StatelessWidget {
       child: Container(
         height: 100,
         width: 100,
-        child: Image.asset(
-          'assets/images/tesla.png',
+        child: CustomImage(
+          imageUrl: vehicle.gallery![0],
+          height: 100,
+          width: 100,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: Colors.grey.shade300,
-              child:
-                  const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-            );
-          },
         ),
       ),
     );
@@ -225,9 +326,9 @@ class RequestToBook extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Model Name
-          const Text(
-            'Tesla Model X',
-            style: TextStyle(
+          Text(
+            "${vehicle.model} ${vehicle.brand}",
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -239,18 +340,18 @@ class RequestToBook extends StatelessWidget {
             children: [
               const Icon(Icons.star, color: AppPalette.primaryColor, size: 20),
               const SizedBox(width: 4.0),
-              const Text(
-                '5.00',
-                style: TextStyle(
+              Text(
+                vehicle.rating?.toStringAsFixed(2) ?? "No rating",
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.black54,
                 ),
               ),
               const SizedBox(width: 12.0),
-              const Text(
-                '100 trips',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+              Text(
+                "${vehicle.numberOfTrips.toString()} trips",
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
             ],
           ),
@@ -258,15 +359,11 @@ class RequestToBook extends StatelessWidget {
           // Price
           Row(
             children: [
-              const Icon(Icons.attach_money, size: 20, color: Colors.green),
+              const Icon(Icons.money, size: 20, color: Colors.green),
               const SizedBox(width: 4.0),
-              const Text(
-                '\$122/hour',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              PriceDisplay(
+                price: "${vehicle.pricePerHour.toStringAsFixed(1)}",
+                showPerHour: true,
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:car_rent/core/common/bloc/image_bloc.dart';
+import 'package:car_rent/core/common/bloc/image/image_bloc.dart';
+import 'package:car_rent/core/theme/app_pallete.dart';
 import 'package:car_rent/core/utils/show_snackbar.dart';
 import 'package:car_rent/features/auth/presentation/bloc/auth_bloc.dart' as ab;
 import 'package:car_rent/features/car/domain/entities/vehicle.dart';
@@ -8,6 +9,8 @@ import 'package:car_rent/features/car/presentation/widgets/car_rent_gradient_but
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class CreateVehiclePage extends StatefulWidget {
   static route() => MaterialPageRoute(
@@ -35,6 +38,8 @@ class _CreateVehiclePageState extends State<CreateVehiclePage> {
   final galleryImages = <File>[];
   final galleryImageUrls = <String>[];
   final formKey = GlobalKey<FormState>();
+
+  bool isCreateButtonClicked = false;
 
   String? transmissionType;
   String? category;
@@ -132,8 +137,16 @@ class _CreateVehiclePageState extends State<CreateVehiclePage> {
             if (state is VehicleFailure) {
               showSnackbar(context, state.message);
             }
-            if (state is VehicleLoadSuccess) {
-              showSnackbar(context, 'Vehicle created successfully!');
+            if (state is CurrentUserVehiclesLoadSuccess) {
+              if (isCreateButtonClicked) {
+                showTopSnackBar(
+                  Overlay.of(context),
+                  const CustomSnackBar.success(
+                    message: "Vehicle Created successfully!",
+                  ),
+                );
+                Navigator.pop(context);
+              }
             }
           },
         ),
@@ -343,11 +356,17 @@ class _CreateVehiclePageState extends State<CreateVehiclePage> {
           insuranceImageUrl: insuranceImageUrlController.text.trim(),
           gallery: galleryImageUrls,
           available: true,
+          activeStatus: true,
           createdAt: DateTime.now(),
           descriptionNote: descriptionNoteController.text.trim(),
           guidelines: guidelinesController.text.trim(),
         );
         context.read<VehicleBloc>().add(CreateVehicleEvent(vehicle));
+        Future.delayed(const Duration(milliseconds: 10), () {
+          setState(() {
+            isCreateButtonClicked = true;
+          });
+        });
       } catch (e) {
         showSnackbar(context, 'Error creating vehicle: $e');
       }
@@ -471,8 +490,11 @@ class _CreateVehiclePageState extends State<CreateVehiclePage> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {TextInputType keyboardType = TextInputType.text}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextFormField(
@@ -482,7 +504,26 @@ class _CreateVehiclePageState extends State<CreateVehiclePage> {
             value == null || value.isEmpty ? 'Please enter $label' : null,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide:
+                const BorderSide(color: AppPalette.primaryColor, width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Colors.red, width: 2),
+          ),
         ),
       ),
     );
@@ -503,7 +544,7 @@ class _CreateVehiclePageState extends State<CreateVehiclePage> {
         validator: (value) => value == null ? 'Please select a $label' : null,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
       ),
     );

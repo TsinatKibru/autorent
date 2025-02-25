@@ -1,6 +1,8 @@
+import 'package:car_rent/core/common/bloc/profile/profile_bloc.dart';
 import 'package:car_rent/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:car_rent/core/common/entities/user.dart';
+import 'package:car_rent/features/auth/presentation/pages/local_auth_page.dart';
 import 'package:car_rent/features/auth/presentation/widgets/auth_gradient_button.dart';
-import 'package:car_rent/features/car/presentation/bloc/vehicle_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:car_rent/features/auth/presentation/pages/login_page.dart';
@@ -25,7 +27,6 @@ class _SplashPageState extends State<SplashPage> {
     context.read<AuthBloc>().add(AuthIsUserLoggedIn());
 
     // Trigger fetching vehicles
-    context.read<VehicleBloc>().add(FetchVehiclesEvent());
 
     // Simulate a delay for the splash screen
     Future.delayed(const Duration(seconds: 3), () {
@@ -45,13 +46,27 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent.withOpacity(0.9),
-      body: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) => state is AppUserLoggedIn,
-        builder: (context, isLoggedIn) {
-          if (isLoggedIn) {
-            return BottomNavigationBarWidget();
+      body: BlocSelector<AppUserCubit, AppUserState, User?>(
+        selector: (state) {
+          print("AppUserLoggedIn: ${state}");
+          if (state is AppUserLoggedIn) {
+            return state.user;
           }
-          if (_isInitialized) {
+          return null;
+        },
+        builder: (context, user) {
+          if (user != null) {
+            // Trigger fetching the profile when the user is logged in
+            context.read<ProfileBloc>().add(FetchProfileEvent(id: user.id));
+            print("objekdvkjdct");
+            // context.read<WalletBloc>().add(FetchWalletEvent(
+            //       user.id,
+            //     ));
+
+            return LocalAuthPage();
+          }
+          if (_isInitialized && user == null) {
+            print("djfvkdsfsdfj");
             return const LogInPage();
           }
           return _buildSplashBody();

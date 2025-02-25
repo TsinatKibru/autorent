@@ -46,6 +46,17 @@ dependencies:
   fluttertoast: ^8.2.10
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
+  bloc_concurrency: ^0.2.5
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  flutter_cache_manager: ^3.4.1
+  geocoding: ^3.0.0
+  top_snackbar_flutter: ^3.2.0
+  sliding_up_panel: ^2.0.0+1
+  permission_handler: ^11.4.0
+  geolocator: ^13.0.2
+  url_launcher: ^6.3.1
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -62,7 +73,7 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 icons_launcher:
-  image_path: "assets/images/icon.png"
+  image_path: "assets/images/logo.png"
   platforms:
     android:
       enable: true

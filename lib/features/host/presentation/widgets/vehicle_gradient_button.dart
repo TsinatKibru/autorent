@@ -24,7 +24,7 @@ class VehicleGradientButton extends StatelessWidget {
       ),
       child: Text(
         buttonText,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           color: Colors.white,
         ),

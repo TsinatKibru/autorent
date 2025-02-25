@@ -22,4 +22,9 @@ class UserModel extends User {
       name: name ?? this.name,
     );
   }
+
+  @override
+  String toString() {
+    return 'UserModel(id: $id, EMAIL: $email, name: $name,)';
+  }
 }

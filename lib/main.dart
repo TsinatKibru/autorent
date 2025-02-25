@@ -1,12 +1,19 @@
-import 'package:car_rent/core/common/bloc/image_bloc.dart';
+import 'package:car_rent/core/common/bloc/image/image_bloc.dart';
+import 'package:car_rent/core/common/bloc/profile/profile_bloc.dart';
+import 'package:car_rent/core/common/bloc/profile/vehicle_owner/bloc/vehicle_owner_profile_bloc.dart';
+import 'package:car_rent/core/common/bloc/rating/average_rating_bloc.dart';
+import 'package:car_rent/core/common/bloc/rating/rating_bloc.dart';
+import 'package:car_rent/core/common/bloc/rental/rental_bloc.dart';
+import 'package:car_rent/core/common/bloc/transation/transaction_bloc.dart';
+import 'package:car_rent/core/common/bloc/trip/trip_bloc.dart';
+import 'package:car_rent/core/common/bloc/wallet/wallet_bloc.dart';
 import 'package:car_rent/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:car_rent/core/theme/theme.dart';
 import 'package:car_rent/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:car_rent/features/auth/presentation/pages/login_page.dart';
-import 'package:car_rent/features/auth/presentation/pages/signup_page.dart';
+import 'package:car_rent/features/car/presentation/bloc/most_popular_vehicle_bloc.dart';
 import 'package:car_rent/features/car/presentation/bloc/vehicle_bloc.dart';
+import 'package:car_rent/features/messaging/presentation/bloc/message_bloc.dart';
 import 'package:car_rent/features/navigation/presentation/pages/splash_page.dart';
-import 'package:car_rent/features/navigation/presentation/widgets/bottom_navigation_bar_widget.dart';
 import 'package:car_rent/initDependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +44,16 @@ void main() async {
               AuthBloc>()), // this is why we need dependency injection : to instantiate one provider we had to pass all these
       BlocProvider(create: (_) => serviceLocator<VehicleBloc>()),
       BlocProvider(create: (_) => serviceLocator<ImageBloc>()),
+      BlocProvider(create: (_) => serviceLocator<ProfileBloc>()),
+      BlocProvider(create: (_) => serviceLocator<VehicleOwnerProfileBloc>()),
+      BlocProvider(create: (_) => serviceLocator<RentalBloc>()),
+      BlocProvider(create: (_) => serviceLocator<TripBloc>()),
+      BlocProvider(create: (_) => serviceLocator<WalletBloc>()),
+      BlocProvider(create: (_) => serviceLocator<RatingBloc>()),
+      BlocProvider(create: (_) => serviceLocator<MessageBloc>()),
+      BlocProvider(create: (_) => serviceLocator<MostPopularVehicleBloc>()),
+      BlocProvider(create: (_) => serviceLocator<AverageRatingBloc>()),
+      BlocProvider(create: (_) => serviceLocator<TransactionBloc>()),
     ],
     child: const MyApp(),
   ));
@@ -65,22 +82,6 @@ class _MyAppState extends State<MyApp> {
         theme: AppTheme.lightTheme,
         themeMode: ThemeMode.light,
         darkTheme: AppTheme.darkTheme,
-        home: SplashPage()
-        // BlocSelector<AppUserCubit, AppUserState, bool>(
-        //   selector: (state) {
-        //     return state is AppUserLoggedIn;
-        //   },
-        //   builder: (context, state) {
-        //     print("state is");
-        //     print(state);
-
-        //     //state == is logged in
-        //     if (state) {
-        //       return BottomNavigationBarWidget();
-        //     }
-        //     return const LogInPage();
-        //   },
-        // ),
-        );
+        home: const SplashPage());
   }
 }

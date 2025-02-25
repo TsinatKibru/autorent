@@ -1,14 +1,13 @@
+import 'package:car_rent/features/car/presentation/bloc/vehicle_bloc.dart';
+import 'package:car_rent/features/host/presentation/widgets/custom_app_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:car_rent/core/common/bloc/profile/profile_bloc.dart';
+import 'package:car_rent/core/common/entities/profile.dart';
 import 'package:car_rent/features/host/presentation/widgets/host_motivation.dart';
 import 'package:car_rent/features/host/presentation/widgets/my_cars.dart';
 import 'package:car_rent/features/host/presentation/widgets/my_orders.dart';
-import 'package:flutter/material.dart';
-import 'package:car_rent/core/theme/app_pallete.dart';
-import 'package:car_rent/features/car/presentation/widgets/car_rent_gradient_button.dart';
-import 'package:car_rent/features/car/presentation/widgets/filtered_cars.dart';
-import 'package:car_rent/features/car/presentation/widgets/most_popular_cars.dart';
-import 'package:car_rent/features/car/presentation/widgets/search_bar_with_filter.dart';
-import 'package:car_rent/features/car/presentation/widgets/top_brands_section.dart';
-import 'package:car_rent/features/car/presentation/widgets/top_rated_cars.dart';
+import 'package:car_rent/features/host/presentation/widgets/update_profile_form.dart';
 
 class HostHomePage extends StatefulWidget {
   const HostHomePage({Key? key}) : super(key: key);
@@ -19,11 +18,9 @@ class HostHomePage extends StatefulWidget {
 
 class _HostHomePageState extends State<HostHomePage> {
   final TextEditingController searchController = TextEditingController();
-  String searchQuery = '';
 
   @override
   void dispose() {
-    // Dispose of the TextEditingController
     searchController.dispose();
     super.dispose();
   }
@@ -33,12 +30,12 @@ class _HostHomePageState extends State<HostHomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Filter Options"),
-          content: Text("Add filter options here."),
+          title: const Text("Filter Options"),
+          content: const Text("Add filter options here."),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text("Close"),
+              child: const Text("Close"),
             ),
           ],
         );
@@ -48,68 +45,90 @@ class _HostHomePageState extends State<HostHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Left side: Icon and Text
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  color: Colors.black87,
-                  size: 24,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  "Location",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: const CustomAppBar(),
+          body: Stack(
+            children: [
+              _buildBody(state),
+              if (state is ProfileLoadSuccess &&
+                  (state.profile.role == "" || state.profile.role == 'renter'))
+                _buildHostRegisterOverlay(state.profile),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody(ProfileState state) {
+    if (state is ProfileLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is ProfileLoadSuccess) {
+      context
+          .read<VehicleBloc>()
+          .add(FetchCurrentUserVehiclesEvent(hostId: state.profile.id));
+      return _hostHomeWidget(state.profile);
+    } else if (state is ProfileFailure) {
+      return Center(child: Text(state.message));
+    }
+    return Container(); // Default or initial state
+  }
+
+  Widget _hostHomeWidget(Profile profile) {
+    return ListView(padding: const EdgeInsets.all(8), children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const HostMotivation(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0.0),
+            child: MyCars(
+              activeowner: profile.role == "host",
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.only(left: 4.0, right: 4, bottom: 30),
+            child: MyOrders(),
+          ),
+        ],
+      ),
+    ]);
+  }
+
+  Widget _buildHostRegisterOverlay(Profile profile) {
+    return Container(
+      color: Colors.black.withOpacity(0.6),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Register as Host",
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => UpdateProfileForm(
+                    profile: profile,
+                    userRole: "host",
                   ),
                 ),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_drop_down, color: AppPalette.primaryColor),
-              ],
-            ),
-            // Right side: Network Image
-            ClipOval(
-              child: Image.network(
-                'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250',
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Row with Location and Profile Picture
-
-            HostMotivation(),
-
-            // Top Rated Cars Section
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: MyCars(),
-            ),
-            const SizedBox(height: 20),
-
-            // Most Popular Cars Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: MyOrders(),
-            ),
-          ],
-        ),
+              );
+            },
+            child: const Text("Update Profile"),
+          ),
+        ],
       ),
     );
   }

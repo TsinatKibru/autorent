@@ -12,51 +12,21 @@ class ImageRemoteDataSourceImpl implements ImageRemoteDataSource {
 
   ImageRemoteDataSourceImpl(this.supabaseClient);
 
-  // @override
-  // Future<String> uploadImage(
-  //     String path, String bucketName, String userId) async {
-  //   print("uploading image");
-  //   try {
-  //     final file = File(path);
-  //     final fileName =
-  //         '$userId${DateTime.now().millisecondsSinceEpoch}_${file.uri.pathSegments.last}';
-
-  //     final response = await supabaseClient.storage
-  //         .from(bucketName)
-  //         .upload('public/$fileName', file);
-  //     if (response.isEmpty) {
-  //       throw Exception('Upload failed');
-  //     }
-
-  //     final publicUrl = supabaseClient.storage
-  //         .from(bucketName)
-  //         .getPublicUrl('public/$fileName');
-
-  //     if (publicUrl.isEmpty) {
-  //       throw ServerException(
-  //           'Failed to generate public URL for the uploaded file.');
-  //     }
-
-  //     // Return the UploadedImageModel
-  //     return publicUrl;
-  //   } catch (e) {
-  //     throw ServerException('Failed to upload image: $e');
-  //   }
-  // }
   @override
   Future<String> uploadImage(
       String path, String bucketName, String userId) async {
+    print(bucketName);
     print("Uploading image...");
     try {
       // Log the file path being uploaded
-      print("File path: $path");
+      // print("File path: $path");
 
       final file = File(path);
 
       // Log the file name being generated
       final fileName =
           '$userId${DateTime.now().millisecondsSinceEpoch}_${file.uri.pathSegments.last}';
-      print("Generated file name: $fileName");
+      // print("Generated file name: $fileName");
 
       // Upload the file to the Supabase storage bucket
       final response = await supabaseClient.storage
@@ -65,10 +35,10 @@ class ImageRemoteDataSourceImpl implements ImageRemoteDataSource {
 
       // Log the response status
       if (response.isEmpty) {
-        print("Upload failed: Response is empty.");
+        // print("Upload failed: Response is empty.");
         throw Exception('Upload failed');
       }
-      print("Upload successful. Response: $response");
+      // print("Upload successful. Response: $response");
 
       // Get the public URL for the uploaded file
       final publicUrl = supabaseClient.storage
@@ -78,14 +48,19 @@ class ImageRemoteDataSourceImpl implements ImageRemoteDataSource {
       // Log the public URL
       if (publicUrl.isEmpty) {
         print("Failed to generate public URL.");
-        throw ServerException(
+        throw const ServerException(
             'Failed to generate public URL for the uploaded file.');
       }
-      print("Public URL generated: $publicUrl");
+      // print("Public URL generated: $publicUrl");
 
       // Return the public URL of the uploaded image
       return publicUrl;
     } catch (e) {
+      if (e.toString().contains("Failed host lookup")) {
+        print("Network error: Unable to resolve hostname.");
+        throw const ServerException(
+            "Network error: Unable to resolve hostname.");
+      }
       // Log the exception error
       print("Error during image upload: $e");
       throw ServerException('Failed to upload image: $e');
@@ -100,7 +75,7 @@ class ImageRemoteDataSourceImpl implements ImageRemoteDataSource {
       final segments = uri.pathSegments;
 
       if (segments.length < 4) {
-        throw ServerException('Invalid public URL format');
+        throw const ServerException('Invalid public URL format');
       }
 
       // Extract bucket name and file path
@@ -113,11 +88,16 @@ class ImageRemoteDataSourceImpl implements ImageRemoteDataSource {
           .createSignedUrl(filePath, durationInSeconds);
 
       if (signedUrl.isEmpty) {
-        throw ServerException('Failed to generate signed URL');
+        throw const ServerException('Failed to generate signed URL');
       }
 
       return signedUrl;
     } catch (e) {
+      if (e.toString().contains("Failed host lookup")) {
+        print("Network error: Unable to resolve hostname.");
+        throw const ServerException(
+            "Network error: Unable to resolve hostname.");
+      }
       throw ServerException('Failed to generate signed URL: $e');
     }
   }

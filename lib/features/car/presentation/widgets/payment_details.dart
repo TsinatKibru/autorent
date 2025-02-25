@@ -1,14 +1,37 @@
+import 'package:car_rent/core/common/constants.dart';
+import 'package:car_rent/core/common/widgets/price_display.dart';
 import 'package:flutter/material.dart';
 
 class PaymentDetails extends StatelessWidget {
-  const PaymentDetails({Key? key}) : super(key: key);
+  final DateTime initialdatetime;
+  final DateTime returndatetime;
+  final double distancefee;
+  final double priceperhour;
+
+  const PaymentDetails({
+    Key? key,
+    required this.initialdatetime,
+    required this.returndatetime,
+    required this.distancefee,
+    required this.priceperhour,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final duration = returndatetime.difference(initialdatetime);
+    final hours = duration.inHours;
+    final days = duration.inDays;
+    final totalHours = (duration.inMinutes / 60).ceil();
+    final tripFee = totalHours * priceperhour + distancefee;
+    final rentalfee = totalHours * priceperhour;
+
+    final discount =
+        0.0; // Example value, you can calculate based on conditions
+    final totalAmount = tripFee - discount;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header
         const Text(
           "Payment Details",
           style: TextStyle(
@@ -18,32 +41,29 @@ class PaymentDetails extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-
-        // Pickup & Return Info
         Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: Colors.grey[100], borderRadius: BorderRadius.circular(16)),
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Column(
             children: [
+              // Duration and Cost
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text(
-                    "1212 X 7 days",
-                    style: TextStyle(
+                    "$totalHours hours, ($totalHours  X $priceperhour )",
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black54,
                     ),
                   ),
-                  Text(
-                    "\$Value", // Replace "Value" with actual amount or placeholder
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  PriceDisplay(
+                    price: "${rentalfee.toStringAsFixed(2)}",
+                    priceFontSize: 15,
                   ),
                 ],
               ),
@@ -52,22 +72,18 @@ class PaymentDetails extends StatelessWidget {
               // Trip Fee
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text(
-                    "Trip fee",
-                    style: TextStyle(
+                    "Distance fee (${(distancefee / Constants.perkmprice).toStringAsFixed(2)}. X ${Constants.perkmprice})",
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.black54,
                     ),
                   ),
-                  Text(
-                    "\$348", // Replace this with the actual value
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  PriceDisplay(
+                    price: "${distancefee.toStringAsFixed(2)}",
+                    priceFontSize: 15,
                   ),
                 ],
               ),
@@ -76,8 +92,8 @@ class PaymentDetails extends StatelessWidget {
               // Discount
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Discount",
                     style: TextStyle(
                       fontSize: 15,
@@ -85,13 +101,9 @@ class PaymentDetails extends StatelessWidget {
                       color: Colors.black54,
                     ),
                   ),
-                  Text(
-                    "-", // Replace with actual discount if applicable
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  PriceDisplay(
+                    price: "${discount.toStringAsFixed(2)}",
+                    priceFontSize: 15,
                   ),
                 ],
               ),
@@ -101,8 +113,8 @@ class PaymentDetails extends StatelessWidget {
               // Total Amount
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Total amount",
                     style: TextStyle(
                       fontSize: 16,
@@ -110,13 +122,8 @@ class PaymentDetails extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  Text(
-                    "\$Value", // Replace with actual total amount
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  PriceDisplay(
+                    price: "${totalAmount.toStringAsFixed(2)}",
                   ),
                 ],
               ),

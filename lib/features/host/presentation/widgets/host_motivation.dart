@@ -1,4 +1,5 @@
 import 'package:car_rent/core/theme/app_pallete.dart';
+import 'package:car_rent/features/host/presentation/pages/learn_more_dialog.dart';
 import 'package:flutter/material.dart';
 
 class HostMotivation extends StatelessWidget {
@@ -44,7 +45,7 @@ class HostMotivation extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: TextButton(
                     onPressed: () {
-                      // Add Learn More logic here
+                      Navigator.push(context, LearnMoreDialog.route());
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: AppPalette.primaryColor,

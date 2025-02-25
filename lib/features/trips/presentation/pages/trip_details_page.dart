@@ -1,3 +1,6 @@
+import 'package:car_rent/core/common/entities/trip.dart';
+import 'package:car_rent/core/common/widgets/custom_image.dart';
+import 'package:car_rent/core/utils/date_time_utils.dart';
 import 'package:car_rent/features/car/presentation/widgets/car_rent_gradient_button.dart';
 import 'package:car_rent/features/car/presentation/widgets/get_approved_widget.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +8,8 @@ import 'package:car_rent/core/theme/app_pallete.dart';
 import 'package:car_rent/features/car/presentation/widgets/payment_details.dart';
 
 class TripDetailsPage extends StatelessWidget {
-  const TripDetailsPage({Key? key}) : super(key: key);
+  final Trip trip;
+  const TripDetailsPage({Key? key, required this.trip}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +58,15 @@ class TripDetailsPage extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildDateTimeColumn("10 Aug, Thu", "10:00 AM"),
+                  // _buildDateTimeColumn("10 Aug, Thu", "10:00 AM"),
+                  _buildDateTimeColumn(
+                      "${trip.startTime.day} ${DateTimeUtils.getMonthName(trip.startTime.month)},${DateTimeUtils.getWeekName(trip.startTime)}",
+                      "${DateTimeUtils.getFormattedTime(trip.startTime)}"),
                   const Icon(Icons.arrow_forward, color: Colors.green),
-                  _buildDateTimeColumn("17 Aug, Thu", "5:00 AM"),
+                  // _buildDateTimeColumn("17 Aug, Thu", "5:00 AM"),
+                  _buildDateTimeColumn(
+                      "${trip.endTime.day} ${DateTimeUtils.getMonthName(trip.endTime.month)},${DateTimeUtils.getWeekName(trip.endTime)}",
+                      "${DateTimeUtils.getFormattedTime(trip.endTime)}"),
                 ],
               ),
             ),
@@ -72,12 +82,12 @@ class TripDetailsPage extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                Icon(Icons.location_on,
+                const Icon(Icons.location_on,
                     color: AppPalette.primaryColor, size: 24),
                 const SizedBox(width: 8),
-                const Text(
-                  "Addis Ababa, CA 911212",
-                  style: TextStyle(
+                Text(
+                  trip.pickupLocation,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     color: Colors.black38,
@@ -86,7 +96,7 @@ class TripDetailsPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            PaymentDetails(),
+            // PaymentDetails(),
           ],
         ),
       ),
@@ -97,19 +107,10 @@ class TripDetailsPage extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(12.0),
       child: Container(
-        height: 100,
-        width: 100,
-        child: Image.asset(
-          'assets/images/tesla.png',
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              color: Colors.grey.shade300,
-              child:
-                  const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-            );
-          },
-        ),
+        height: 110,
+        width: 110,
+        child: CustomImage(
+            imageUrl: trip.vehicle.gallery![0], height: 110, width: 110),
       ),
     );
   }
@@ -120,9 +121,9 @@ class TripDetailsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Model Name
-          const Text(
-            'Tesla Model X',
-            style: TextStyle(
+          Text(
+            "${trip.vehicle.model} ${trip.vehicle.brand}",
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -134,18 +135,18 @@ class TripDetailsPage extends StatelessWidget {
             children: [
               const Icon(Icons.star, color: AppPalette.primaryColor, size: 20),
               const SizedBox(width: 4.0),
-              const Text(
-                '5.00',
-                style: TextStyle(
+              Text(
+                trip.vehicle.rating?.toStringAsFixed(2) ?? "No rating",
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.black54,
                 ),
               ),
               const SizedBox(width: 12.0),
-              const Text(
-                '100 trips',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+              Text(
+                trip.vehicle.numberOfTrips.toString(),
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
             ],
           ),
@@ -155,9 +156,9 @@ class TripDetailsPage extends StatelessWidget {
             children: [
               const Icon(Icons.attach_money, size: 20, color: Colors.green),
               const SizedBox(width: 4.0),
-              const Text(
-                '\$122/hour',
-                style: TextStyle(
+              Text(
+                "${trip.vehicle.pricePerHour}/hour",
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,

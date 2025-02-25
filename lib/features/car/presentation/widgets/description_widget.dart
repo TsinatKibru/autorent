@@ -1,11 +1,28 @@
+import 'package:car_rent/core/common/bloc/rating/average_rating_bloc.dart';
+import 'package:car_rent/core/common/widgets/custom_image.dart';
+import 'package:car_rent/features/car/domain/entities/vehicle.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rent/core/theme/app_pallete.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class DescriptionWidget extends StatelessWidget {
-  const DescriptionWidget({Key? key}) : super(key: key);
+class DescriptionWidget extends StatefulWidget {
+  final Vehicle vehicle;
+  const DescriptionWidget({Key? key, required this.vehicle}) : super(key: key);
+
+  @override
+  State<DescriptionWidget> createState() => _DescriptionWidgetState();
+}
+
+class _DescriptionWidgetState extends State<DescriptionWidget> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final vehicle = widget.vehicle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -21,12 +38,13 @@ class DescriptionWidget extends StatelessWidget {
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-            "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.",
-            style: TextStyle(fontSize: 14, color: Colors.black54),
+            vehicle.descriptionNote ??
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                    "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.",
+            style: const TextStyle(fontSize: 14, color: Colors.black54),
           ),
         ),
         const SizedBox(height: 24.0),
@@ -51,36 +69,42 @@ class DescriptionWidget extends StatelessWidget {
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            children: const [
+            children: [
               _CarBasicsCard(
                 icon: Icons.battery_charging_full_outlined,
                 label: "Battery",
-                value: "100 kWh",
+                // value: "100 kWh",
+                value: '${vehicle.batteryCapacity.toString()} kwh',
               ),
               _CarBasicsCard(
                 icon: Icons.event_seat,
                 label: "Capacity",
-                value: "5 seats",
+                // value: "5 seats",
+                value: '${vehicle.seatingCapacity.toString()} seats',
               ),
               _CarBasicsCard(
                 icon: Icons.door_sliding,
                 label: "Entrance",
-                value: "4 doors",
+                // value: "4 doors",
+                value: '${vehicle.numberOfDoors.toString()} doors',
               ),
               _CarBasicsCard(
                 icon: Icons.speed,
                 label: "Top Speed",
-                value: "250 km/h",
+                // value: "250 km/h",
+                value: '${vehicle.topSpeed.toString()} km/h',
               ),
               _CarBasicsCard(
                 icon: Icons.settings,
                 label: "Transmission",
-                value: "Automatic",
+                // value: "Automatic",
+                value: '${vehicle.transmissionType.toString()} ',
               ),
               _CarBasicsCard(
                 icon: Icons.local_gas_station,
-                label: "Engine",
-                value: "Electric",
+                label: "Engine ",
+                // value: "Electric",
+                value: '${vehicle.engineOutput.toString()} HP',
               ),
             ],
           ),
@@ -104,7 +128,28 @@ class DescriptionWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: GestureDetector(
             onTap: () {
-              // Implement read more functionality
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Insurance Details'),
+                    ),
+                    body: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: CustomImage(
+                          imageUrl: vehicle.insuranceImageUrl ?? "",
+                          height: 600,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          showLoadingProgress: true,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
             },
             child: _buildOptionRow(
               Icons.shield,
@@ -137,59 +182,6 @@ class DescriptionWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16.0),
-        // Rating and Reviews Section
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            "Rating and Reviews",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-        ),
-        const SizedBox(height: 8.0),
-        // Display ratings
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              Icon(Icons.star, color: AppPalette.primaryColor, size: 20),
-              const SizedBox(width: 4.0),
-              const Text(
-                "5.00",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 8.0),
-              const Text(
-                "• 139 reviews",
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16.0),
-
-        // Reviews Section
-
-        // Add these widgets below the "View Reviews" section
-
-// Add Ratings Details with Lines
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: const [
-              _RatingDetailRow(label: "Cleanliness", value: "4"),
-              SizedBox(height: 8.0),
-              _RatingDetailRow(label: "Maintenance", value: "5"),
-              SizedBox(height: 8.0),
-              _RatingDetailRow(label: "Comfort", value: "5"),
-              SizedBox(height: 8.0),
-              _RatingDetailRow(label: "Location", value: "4.5"),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -252,16 +244,16 @@ class _RatingDetailRow extends StatelessWidget {
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
-          Expanded(
+          const Expanded(
             child: Divider(
               color: AppPalette.primaryColor,
               thickness: 5,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
           ),
           Text(

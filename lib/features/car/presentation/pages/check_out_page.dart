@@ -21,9 +21,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(left: 42.0),
-          child: const Text(
+        title: const Padding(
+          padding: EdgeInsets.only(left: 42.0),
+          child: Text(
             'Checkout',
             style: TextStyle(
               fontSize: 20,
@@ -85,7 +85,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               Expanded(
                                 child: Text(
                                   method['name']!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     color: Colors.black87, // Darker text color
                                     fontWeight: FontWeight.w400,
@@ -121,10 +121,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               ),
                             ),
                           if (isSelected && method['name'] == 'Credit Card')
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 12.0),
                               child: Column(
-                                children: const [
+                                children: [
                                   TextField(
                                     decoration: InputDecoration(
                                       labelText: 'Card Number',
@@ -146,9 +146,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                               ),
                             ),
                           if (isSelected && method['name'] == 'PayPal')
-                            Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: const TextField(
+                            const Padding(
+                              padding: EdgeInsets.only(top: 12.0),
+                              child: TextField(
                                 decoration: InputDecoration(
                                   labelText: 'PayPal Email',
                                 ),
@@ -166,7 +166,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Row(
+                    content: const Row(
                       children: [
                         Icon(Icons.check_circle,
                             color: Colors.white, size: 24), // Icon added
@@ -180,11 +180,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         ),
                       ],
                     ),
-                    duration: Duration(seconds: 4),
+                    duration: const Duration(seconds: 4),
                     backgroundColor: AppPalette.primaryColor,
                     behavior:
                         SnackBarBehavior.floating, // Makes the snackbar float
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                       bottom:
                           80, // Adjust this value to push it above the navigation bar
                       left: 16,

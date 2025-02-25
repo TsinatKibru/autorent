@@ -1,5 +1,8 @@
+import 'package:car_rent/core/utils/date_time_utils.dart';
 import 'package:car_rent/features/car/presentation/widgets/car_rent_gradient_button.dart';
 import 'package:flutter/material.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class SelectTripDateAndTime extends StatefulWidget {
   const SelectTripDateAndTime({Key? key}) : super(key: key);
@@ -151,7 +154,7 @@ class _SelectTripDateAndTimeState extends State<SelectTripDateAndTime> {
               },
             ),
             Text(
-              "${selectedDate.year} - ${_monthName(selectedDate.month)}",
+              "${selectedDate.year} - ${DateTimeUtils.getMonthName(selectedDate.month)}",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             IconButton(
@@ -263,24 +266,6 @@ class _SelectTripDateAndTimeState extends State<SelectTripDateAndTime> {
     );
   }
 
-  String _monthName(int month) {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ];
-    return months[month - 1];
-  }
-
   String _formatSliderTime(double minutes) {
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
@@ -288,13 +273,25 @@ class _SelectTripDateAndTimeState extends State<SelectTripDateAndTime> {
   }
 
   void _saveSelection() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Initial Date: ${selectedInitialDate.month}/${selectedInitialDate.day} ${_formatSliderTime(selectedInitialTimeInMinutes)}\n"
-          "Return Date: ${selectedReturnDate.month}/${selectedReturnDate.day} ${_formatSliderTime(selectedReturnTimeInMinutes)}",
+    if (selectedInitialDate!.isAfter(selectedReturnDate!)) {
+      // Show Snackbar error if the initial date is after the return date
+
+      showTopSnackBar(
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: "Return date must be after the initial date!",
         ),
-      ),
+      );
+      return; // Stop execution
+    }
+    Navigator.pop(
+      context,
+      {
+        'initialDate': selectedInitialDate,
+        'initialTime': selectedInitialTimeInMinutes,
+        'returnDate': selectedReturnDate,
+        'returnTime': selectedReturnTimeInMinutes,
+      },
     );
   }
 

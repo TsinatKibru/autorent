@@ -5,13 +5,24 @@ import 'package:car_rent/features/car/domain/repository/vehicle_repository.dart'
 
 import 'package:fpdart/fpdart.dart';
 
-class UpdateVehicle implements Usecase<Unit, UpdateVehicleParams> {
+// class UpdateVehicle implements Usecase<Unit, UpdateVehicleParams> {
+//   final VehiclesRepository repository;
+
+//   UpdateVehicle(this.repository);
+
+//   @override
+//   Future<Either<Failure, Unit>> call(UpdateVehicleParams params) async {
+//     return await repository.updateVehicle(params.id, params.vehicle);
+//   }
+// }
+
+class UpdateVehicle implements Usecase<Vehicle, UpdateVehicleParams> {
   final VehiclesRepository repository;
 
   UpdateVehicle(this.repository);
 
   @override
-  Future<Either<Failure, Unit>> call(UpdateVehicleParams params) async {
+  Future<Either<Failure, Vehicle>> call(UpdateVehicleParams params) async {
     return await repository.updateVehicle(params.id, params.vehicle);
   }
 }

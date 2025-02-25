@@ -80,9 +80,9 @@ class BookNowWidget extends StatelessWidget {
                                   children: [
                                     Row(
                                       children: [
-                                        Text(
+                                        const Text(
                                           "\$120",
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.black,
@@ -137,11 +137,11 @@ class BookNowWidget extends StatelessWidget {
                             ),
                           ),
                           const Divider(height: 1, color: Colors.grey),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
                                   "Cancellation Policy",
                                   style: TextStyle(

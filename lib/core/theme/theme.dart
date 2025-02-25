@@ -23,7 +23,7 @@ class AppTheme {
     ),
     scaffoldBackgroundColor: AppPalette.lightBackgroundColor,
     inputDecorationTheme: InputDecorationTheme(
-      enabledBorder: OutlineInputBorder(
+      enabledBorder: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(6)),
         borderSide: BorderSide(color: AppPalette.inputBorderColor, width: 1),
       ),
@@ -32,8 +32,8 @@ class AppTheme {
             color: AppPalette.primaryColor.withOpacity(0.3),
             width: 2), // Slightly thicker when focused
       ),
-      hintStyle: TextStyle(color: AppPalette.textSecondary),
-      labelStyle: TextStyle(color: AppPalette.textPrimary),
+      hintStyle: const TextStyle(color: AppPalette.textSecondary),
+      labelStyle: const TextStyle(color: AppPalette.textPrimary),
     ),
     useMaterial3: true,
   );

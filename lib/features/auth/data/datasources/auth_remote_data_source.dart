@@ -30,16 +30,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      print(response.user!.id);
+      //print(response.user!.id);
       if (response.user == null) {
         throw const ServerException('User is null');
       }
       return UserModel.fromJson(response.user!.toJson());
-    } catch (e) {
-      if (e.toString().contains("Failed host lookup")) {
-        print("Network error: Unable to resolve hostname.");
-        throw ServerException("Network error: Unable to resolve hostname.");
+    } on AuthException catch (e) {
+      // Check if the error message contains network-related issues
+      if (e.message.contains("Failed host lookup") ||
+          e.message.contains("SocketException") ||
+          e.message.contains("No address associated with hostname")) {
+        //print("Network error: No internet connection.");
+        throw const ServerException("Network error: No internet connection.");
       }
+
+      // Handle generic authentication errors (e.g., wrong credentials)
+      //print("Auth error: ${e.message}");
+      throw ServerException("Authentication failed: ${e.message}");
+    } catch (e) {
       print(e.toString());
       throw ServerException(e.toString());
     }
@@ -52,22 +60,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      print("remote datatsource");
+      //print("remote datatsource");
       final response = await supabaseClient.auth.signUp(
         email: email,
         password: password,
         data: {'name': name},
       );
-      print(response.user!.id);
+      //print(response.user!.id);
       if (response.user == null) {
-        print("null response");
+        //print("null response");
         throw const ServerException('User is null');
       }
       return UserModel.fromJson(response.user!.toJson());
     } catch (e) {
       if (e.toString().contains("Failed host lookup")) {
         print("Network error: Unable to resolve hostname.");
-        throw ServerException("Network error: Unable to resolve hostname.");
+        throw const ServerException(
+            "Network error: Unable to resolve hostname.");
       }
       print(e.toString());
       throw ServerException(e.toString());
@@ -81,26 +90,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData() async {
     try {
       if (currentUserSession != null) {
-        print(
-            "Fetching current user data for ID: ${currentUserSession!.user.id}");
         final userData = await supabaseClient
             .from('profiles')
             .select()
             .eq('id', currentUserSession!.user.id)
             .single();
 
-        print("Fetched user data: $userData");
         return UserModel.fromJson(userData).copyWith(
           email: currentUserSession!.user.email,
         );
       } else {
-        print("No active session found");
         return null;
       }
     } catch (e) {
       if (e.toString().contains("Failed host lookup")) {
         print("Network error: Unable to resolve hostname.");
-        throw ServerException("Network error: Unable to resolve hostname.");
+        throw const ServerException(
+            "Network error: Unable to resolve hostname.");
       }
       print("Error fetching current user data: $e");
       throw ServerException(e.toString());
@@ -111,8 +117,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> signOut() async {
     try {
       await supabaseClient.auth.signOut();
-      print("User signed out successfully");
+      //print("User signed out successfully");
     } catch (e) {
+      if (e.toString().contains("Failed host lookup")) {
+        print("Network error: Unable to resolve hostname.");
+        throw const ServerException(
+            "Network error: Unable to resolve hostname.");
+      }
       print("Error during sign-out: $e");
       throw ServerException(e.toString());
     }

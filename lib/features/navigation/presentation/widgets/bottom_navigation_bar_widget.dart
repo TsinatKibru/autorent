@@ -3,6 +3,7 @@ import 'package:car_rent/features/car/presentation/pages/favorites_page.dart';
 import 'package:car_rent/features/car/presentation/pages/home_page.dart';
 import 'package:car_rent/features/host/presentation/pages/host_home_page.dart';
 import 'package:car_rent/features/messaging/presentation/pages/message_page.dart';
+import 'package:car_rent/features/messaging/presentation/pages/rental_list_page.dart';
 import 'package:car_rent/features/trips/presentation/pages/trips_page.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -31,11 +32,11 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   }
 
   late final List<Widget> _pages = [
-    MessagePage(selectedUser: widget.selectedUser), // Pass selectedUser here
+    const RentalListPage(), // Pass selectedUser here
     TripsPage(),
-    HomePage(),
+    const HomePage(),
     FavoritesPage(),
-    HostHomePage(),
+    const HostHomePage(),
   ];
 
   void _onTabTapped(int index) {
@@ -52,7 +53,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
       // Show SnackBar for confirmation
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Press back again to exit"),
           duration: Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
@@ -78,7 +79,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           height: 60.0,
           color: AppPalette.primaryColor,
           backgroundColor: Colors.transparent,
-          animationDuration: Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 300),
           items: <Widget>[
             Icon(Icons.message,
                 size: 30,

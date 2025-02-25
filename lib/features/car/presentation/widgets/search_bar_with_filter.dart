@@ -110,10 +110,17 @@ class SearchBarWithFilter extends StatelessWidget {
     return Container(
       height: 65, // Increased height for a bigger search bar
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
-        border: Border.all(color: Colors.black12),
-        borderRadius: BorderRadius.circular(15.0),
-      ),
+          color: theme.colorScheme.surfaceVariant,
+          border: Border.all(color: Colors.grey[200]!),
+          borderRadius: BorderRadius.circular(15.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1), // Shadow color
+              blurRadius: 100, // Blur radius
+              spreadRadius: 0, // Spread radius
+              offset: const Offset(0, 0), // Shadow position
+            ),
+          ]),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Row(
@@ -138,7 +145,7 @@ class SearchBarWithFilter extends StatelessWidget {
                   border: InputBorder.none, // Removes borders for a clean look
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12.0),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12.0),
                   hintStyle: theme.textTheme.bodyLarge?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                     fontSize: 16, // Larger font size for better readability
