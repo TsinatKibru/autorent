@@ -20,6 +20,7 @@ class AuthField extends StatelessWidget {
     bool isEmailField = hintText.toLowerCase().contains('email');
 
     return TextFormField(
+      style: const TextStyle(color: Colors.white),
       controller: controller,
       decoration: InputDecoration(
         hintText: hintText,

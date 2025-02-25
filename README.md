@@ -58,7 +58,7 @@ flutter run
 
 ## App Architecture
 
-Auto Rent follows a modular and scalable architecture pattern, ensuring:
+Auto Rent follows Clean Architecture principles, ensuring:
 
 - **Maintainability**
 - **Reusability**

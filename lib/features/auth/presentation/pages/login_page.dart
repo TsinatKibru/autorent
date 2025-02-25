@@ -46,7 +46,7 @@ class _LogInPageState extends State<LogInPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/greenbg2.jpg'),
+            image: AssetImage('assets/images/bgimage4.png'),
             fit: BoxFit.cover, // Ensures the image covers the entire background
             colorFilter: ColorFilter.mode(
               Colors.transparent, // Adds a greenish overlay
@@ -79,7 +79,7 @@ class _LogInPageState extends State<LogInPage> {
                       style: TextStyle(
                           fontSize: 39,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                     const SizedBox(height: 30),
                     AuthField(
@@ -123,7 +123,10 @@ class _LogInPageState extends State<LogInPage> {
                       child: RichText(
                         text: TextSpan(
                           text: 'Don\'t have an account? ',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(color: Colors.white),
                           children: [
                             TextSpan(
                               text: 'Sign Up',
