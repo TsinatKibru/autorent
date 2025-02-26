@@ -14,7 +14,8 @@ Auto Rent is a modern and user-friendly car rental app that provides a seamless 
 - **Smart Filters**: Narrow your search with options for price, type, fuel, and more.
 - **Quick Booking**: Rent a car in just a few taps.
 - **Location-Based Services**: Find cars available near your current location.
-- **24/7 Support**: Always available to assist with your car rental needs.
+- **Hosting Cars**: Car owners can host their cars and earn a passive income.
+- **🔐Local Authentication:** Secure access using biometrics or PIN.
 
 ### 🌟 Why Choose Auto Rent?
 
