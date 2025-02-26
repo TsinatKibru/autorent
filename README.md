@@ -70,11 +70,22 @@ Auto Rent follows Clean Architecture principles, ensuring:
 
 <table>
   <tr>
-    <td><img src="./assets/images/bgimage1.jpg" width="100%"></td>
-    <td><img src="./assets/images/bgimage2.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_2025-02-26_08-49-41.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_homepage.jpg" width="100%"></td>
   </tr>
   <tr>
-    <td><img src="./assets/images/bgimage3.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_cardetails.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_cardetails2.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_cardetails3.jpg" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/images/photo_location_select_page.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_request_to_book.jpg" width="100%"></td>
+   
+  </tr>
+  <tr>
+    <td><img src="./assets/images/host.jpg" width="100%"></td>
+    <td><img src="./assets/images/photo_host_my_orders.jpg" width="100%"></td>
   </tr>
 </table>
 ---
