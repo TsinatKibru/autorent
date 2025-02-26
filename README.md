@@ -68,10 +68,15 @@ Auto Rent follows Clean Architecture principles, ensuring:
 
 ## Screenshots
 
-![Home Screen](./assets/images/bgimage1.jpg) [Car Details](./assets/images/bgimage2.jpg)
-![Car Details](./assets/images/bgimage2.jpg)  
-![Booking Confirmation](./assets/images/bgimage3.jpg)
-
+<table>
+  <tr>
+    <td><img src="./assets/images/bgimage1.jpg" width="100%"></td>
+    <td><img src="./assets/images/bgimage2.jpg" width="100%"></td>
+  </tr>
+  <tr>
+    <td><img src="./assets/images/bgimage3.jpg" width="100%"></td>
+  </tr>
+</table>
 ---
 
 ## Contributing
